@@ -1,6 +1,7 @@
 # Rename Files
 # author: hypermodified
 # This python script loops through a directory and looks for files that are flac, when it finds them it uses the Vorbis tags to rename the file to a specific format.
+# This has only been tested to work with flac files.
 # It can handle albums with artwork folders or multiple disc folders in them. It can also handle specials characters.
 # It has been tested and works in both Ubuntu Linux and Windows 10.
 
@@ -87,7 +88,9 @@ def cleanFilename(file_name):
         file_name = file_name.replace(c, "／")
     return file_name
 
-'''# A function to remove any null values from track numbers
+
+"""# Keeping this function in case i want to refactor the next one and use ideas from it
+# A function to remove any null values from track numbers
 def clean_track_number(track_number):
     each_char = list(track_number)
     clean_track = []
@@ -98,13 +101,9 @@ def clean_track_number(track_number):
         except:
             print("Bad Character Found")
             continue
-            
-    print("CLEANER:")
-    print(clean_track)
     track_number = ''.join(clean_track)
-    print(track_number)
-    return track_number'''
- 
+    return track_number"""
+
 # A function to remove any null values from strings
 def clean_string_null(string_to_clean):
     each_char = list(string_to_clean)
@@ -114,13 +113,14 @@ def clean_string_null(string_to_clean):
             print("--Bad character removed")
         else:
             clean_track.append(i)
-    clean_string = ''.join(clean_track)
+    clean_string = "".join(clean_track)
     return clean_string
-    
+
+
 # A function to add a leading zero if it is missing, avoiding vinyl names
 def add_leading_zero(track_number):
     each_char = list(track_number)
-    num_list = ("0","1","2","3","4","5","6","7","8","9")
+    num_list = ("0", "1", "2", "3", "4", "5", "6", "7", "8", "9")
     if each_char[0] in num_list:
         track_number_length = len(track_number)
         # Add leading zero to track if the zero is missing
@@ -136,9 +136,9 @@ def add_leading_zero(track_number):
 
 # A function to check if there are more than one discs worth of tracks in one folder
 def multidisc_check(directory):
-    print("--Checking if multi-disc.")   
-    disc_number_set = set() 
-     
+    print("--Checking if multi-disc.")
+    disc_number_set = set()
+
     # Loop through the directory and check if there is more than one disc number
     for fname in os.listdir(directory):
         if fname.endswith(".flac"):
@@ -150,11 +150,12 @@ def multidisc_check(directory):
     disc_number_set_length = len(disc_number_set)
     if disc_number_set_length > 1:
         return True
-    else: 
+    else:
         return False
 
-# A function to check the tags of each file and sort it if critical tags are missing
-def rename_file(directory,multidisc_status):
+
+# A function to write a new file name based on the metadata of the track
+def rename_file(directory, multidisc_status):
     global count
     global file_template
 
@@ -171,15 +172,15 @@ def rename_file(directory,multidisc_status):
             rename_list.append(f"--Old Name: {fname}")
 
             # clean null characters out of track number, artist and title strings
-            # set variables 
+            # set variables
             track_number = meta_data["tracknumber"][0]
             artist = meta_data["artist"][0]
-            title = meta_data["title"][0] 
+            title = meta_data["title"][0]
             if multidisc_status == True:
                 disc_number = disc_number = meta_data["discnumber"][0]
             # clean variables
             track_number = clean_string_null(track_number)
-            artist = clean_string_null(artist) 
+            artist = clean_string_null(artist)
             title = clean_string_null(title)
             if multidisc_status == True:
                 disc_number = clean_string_null(disc_number)
@@ -188,13 +189,13 @@ def rename_file(directory,multidisc_status):
             track_number = add_leading_zero(track_number)
             if multidisc_status == True:
                 disc_number = add_leading_zero(disc_number)
-            
+
             # Write clean and formatted track number as new metadata to track
             meta_data["tracknumber"] = track_number
             meta_data["artist"] = artist
             meta_data["title"] = title
             if multidisc_status == True:
-                meta_data["discnumber"] = disc_number           
+                meta_data["discnumber"] = disc_number
             meta_data.save()
 
             # Set new name using file template
@@ -207,11 +208,11 @@ def rename_file(directory,multidisc_status):
                 if file_template == 1:
                     new_name = f"{meta_data['discnumber'][0]} - {meta_data['tracknumber'][0]} - {meta_data['title'][0]}.flac"
                 elif file_template == 2:
-                    new_name = f"{meta_data['discnumber'][0]} - {meta_data['tracknumber'][0]} - {meta_data['artist'][0]} - {meta_data['title'][0]}.flac"                
-          
+                    new_name = f"{meta_data['discnumber'][0]} - {meta_data['tracknumber'][0]} - {meta_data['artist'][0]} - {meta_data['title'][0]}.flac"
+
             # Clean the filename of any banned characters
             new_name = cleanFilename(new_name)
-            
+
             print(f"--New Name: {new_name}")
             # log new name
             rename_list.append(f"--New Name: {new_name}")
@@ -241,7 +242,6 @@ def main():
         # intro text
         print("")
         print("Now you see me...")
-        
 
         # Get all the subdirectories of album_directory recursively and store them in a list:
         directories = [os.path.abspath(x[0]) for x in os.walk(album_directory)]
@@ -257,7 +257,7 @@ def main():
             # Check to see if multi-disc processing is needed
             multidisc_status = multidisc_check(i)
             # Rename the files in the directory based on the global template
-            rename_file(i,multidisc_status)
+            rename_file(i, multidisc_status)
 
     finally:
         # Summary text
