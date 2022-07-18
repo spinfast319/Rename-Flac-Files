@@ -13,7 +13,7 @@ import datetime  # Imports functionality that lets you make timestamps
 import mutagen  # Imports functionality to get metadata from music files
 
 #  Set your directories here
-album_directory = "M:\Python Test Environment\Albums"  # Which directory do you want to start with?
+album_directory = "M:\Python Test Environment\Test2"  # Which directory do you want to start with?
 log_directory = "M:\Python Test Environment\Logs"  # Which directory do you want the log in?
 
 # Set your file name template here
@@ -38,7 +38,7 @@ def log_outcomes(directory, log_name, message, log_list):
     with open(log_path, "a", encoding="utf-8") as log_name:
         log_name.write(f"--{today:%b, %d %Y} at {today:%H:%M:%S} from the {script_name}.\n")
         log_name.write(f"The album folder {album_name} {message}.\n")
-        log_name.write('\n'.join(map(str, log_list)))
+        log_name.write("\n".join(map(str, log_list)))
         log_name.write(f"\nAlbum location: {directory}\n")
         log_name.write(" \n")
         log_name.close()
@@ -53,15 +53,113 @@ def summary_text():
     print(f"This script renamed {count} tracks after searching through {total_count} folders.")
 
 
+#  A function to replace illegal characters in the windows operating system
+#  For other operating systems you could tweak this for their illegal characters
+def cleanFilename(file_name):
+    if not file_name:
+        return ""
+    badchar1 = '"'
+    badchar2 = "?"
+    badchar3 = ":"
+    badchar4 = "*"
+    badchar5 = "|"
+    badchar6 = "<"
+    badchar7 = ">"
+    badchar8 = "\\"
+    badchar9 = "/"
+    for c in badchar1:
+        file_name = file_name.replace(c, "＂")
+    for c in badchar2:
+        file_name = file_name.replace(c, "？")
+    for c in badchar3:
+        file_name = file_name.replace(c, "：")
+    for c in badchar4:
+        file_name = file_name.replace(c, "＊")
+    for c in badchar5:
+        file_name = file_name.replace(c, "｜")
+    for c in badchar6:
+        file_name = file_name.replace(c, "＜")
+    for c in badchar7:
+        file_name = file_name.replace(c, "＞")
+    for c in badchar8:
+        file_name = file_name.replace(c, "＼")
+    for c in badchar9:
+        file_name = file_name.replace(c, "／")
+    return file_name
+
+'''# A function to remove any null values from track numbers
+def clean_track_number(track_number):
+    each_char = list(track_number)
+    clean_track = []
+    for i in each_char:
+        try:
+            int(i)
+            clean_track.append(i)
+        except:
+            print("Bad Character Found")
+            continue
+            
+    print("CLEANER:")
+    print(clean_track)
+    track_number = ''.join(clean_track)
+    print(track_number)
+    return track_number'''
+ 
+# A function to remove any null values from strings
+def clean_string_null(string_to_clean):
+    each_char = list(string_to_clean)
+    clean_track = []
+    for i in each_char:
+        if i == "\x00":
+            print("--Bad character removed")
+        else:
+            clean_track.append(i)
+    clean_string = ''.join(clean_track)
+    return clean_string
+    
+# A function to add a leading zero if it is missing, avoiding vinyl names
+def add_leading_zero(track_number):
+    each_char = list(track_number)
+    num_list = ("0","1","2","3","4","5","6","7","8","9")
+    if each_char[0] in num_list:
+        track_number_length = len(track_number)
+        # Add leading zero to track if the zero is missing
+        if track_number_length == 1:
+            track_number = "".join(["0", track_number])
+            print("--Leading zero added.")
+            return track_number
+        else:
+            return track_number
+    else:
+        return track_number
+
+
+# A function to check if there are more than one discs worth of tracks in one folder
+def multidisc_check(directory):
+    print("--Checking if multi-disc.")   
+    disc_number_set = set() 
+     
+    # Loop through the directory and check if there is more than one disc number
+    for fname in os.listdir(directory):
+        if fname.endswith(".flac"):
+            meta_data = mutagen.File(fname)
+            if "discnumber" in meta_data:
+                disc_number = meta_data["discnumber"][0]
+                disc_number_set.add(disc_number)
+
+    disc_number_set_length = len(disc_number_set)
+    if disc_number_set_length > 1:
+        return True
+    else: 
+        return False
+
 # A function to check the tags of each file and sort it if critical tags are missing
-def rename_file(directory):
+def rename_file(directory,multidisc_status):
     global count
     global file_template
 
-    print("")
-    print("Renaming files.")
-    print(f"Directory: {directory}")
-    #Clear the list so the log captures just this albums tracks
+    print("--Renaming files.")
+    # Clear the list so the log captures just this albums tracks
     rename_list = []
 
     # Loop through the directory and rename flac files
@@ -71,33 +169,59 @@ def rename_file(directory):
             print(f"--Old Name: {fname}")
             # log old name
             rename_list.append(f"--Old Name: {fname}")
-            
-            #determine whether track needs leading zero by looking at length
-            track_number = meta_data["tracknumber"][0]
-            track_number_length = len(track_number)
-            # Add leading zero to track if the zero is missing
-            if track_number_length == 1:
-                track_number = "".join(["0", track_number])
-                # Write track number as new metadata to track
-                meta_data["tracknumber"] = track_number
-                meta_data.save()
-                
-            # Set new name using file template
-            if file_template == 1:
-                new_name = f"{meta_data['tracknumber'][0]} - {meta_data['title'][0]}.flac"
-            elif file_template == 2:
-                new_name = f"{meta_data['tracknumber'][0]} - {meta_data['artist'][0]} - {meta_data['title'][0]}.flac"
 
+            # clean null characters out of track number, artist and title strings
+            # set variables 
+            track_number = meta_data["tracknumber"][0]
+            artist = meta_data["artist"][0]
+            title = meta_data["title"][0] 
+            if multidisc_status == True:
+                disc_number = disc_number = meta_data["discnumber"][0]
+            # clean variables
+            track_number = clean_string_null(track_number)
+            artist = clean_string_null(artist) 
+            title = clean_string_null(title)
+            if multidisc_status == True:
+                disc_number = clean_string_null(disc_number)
+
+            # add leading zero to track if needed
+            track_number = add_leading_zero(track_number)
+            if multidisc_status == True:
+                disc_number = add_leading_zero(disc_number)
+            
+            # Write clean and formatted track number as new metadata to track
+            meta_data["tracknumber"] = track_number
+            meta_data["artist"] = artist
+            meta_data["title"] = title
+            if multidisc_status == True:
+                meta_data["discnumber"] = disc_number           
+            meta_data.save()
+
+            # Set new name using file template
+            if multidisc_status == False:
+                if file_template == 1:
+                    new_name = f"{meta_data['tracknumber'][0]} - {meta_data['title'][0]}.flac"
+                elif file_template == 2:
+                    new_name = f"{meta_data['tracknumber'][0]} - {meta_data['artist'][0]} - {meta_data['title'][0]}.flac"
+            elif multidisc_status == True:
+                if file_template == 1:
+                    new_name = f"{meta_data['discnumber'][0]} - {meta_data['tracknumber'][0]} - {meta_data['title'][0]}.flac"
+                elif file_template == 2:
+                    new_name = f"{meta_data['discnumber'][0]} - {meta_data['tracknumber'][0]} - {meta_data['artist'][0]} - {meta_data['title'][0]}.flac"                
+          
+            # Clean the filename of any banned characters
+            new_name = cleanFilename(new_name)
+            
             print(f"--New Name: {new_name}")
             # log new name
             rename_list.append(f"--New Name: {new_name}")
-            
+
             # Rename the file
             os.rename(fname, new_name)
-            count += 1  # variable will increment every loop iteration
-    
-    #figure out how many tracks were renamed
-    tracks_renamed = len(rename_list)/2    
+            count += 1  # variable will increment every loop iteration'''
+
+    # figure out how many tracks were renamed
+    tracks_renamed = len(rename_list) / 2
     if tracks_renamed != 0:
         print(f"--Tracks Renamed: {tracks_renamed:g}")
     else:
@@ -107,7 +231,7 @@ def rename_file(directory):
     log_message = f"had {tracks_renamed:g} files renamed"
     log_list = rename_list
     log_outcomes(directory, log_name, log_message, log_list)
-    
+
 
 # The main function that controls the flow of the script
 def main():
@@ -117,6 +241,7 @@ def main():
         # intro text
         print("")
         print("Now you see me...")
+        
 
         # Get all the subdirectories of album_directory recursively and store them in a list:
         directories = [os.path.abspath(x[0]) for x in os.walk(album_directory)]
@@ -126,8 +251,13 @@ def main():
         for i in directories:
             os.chdir(i)  # Change working Directory
             total_count += 1  # variable will increment every loop iteration
+            print("")
+            print("Processing files.")
+            print(f"Directory: {i}")
+            # Check to see if multi-disc processing is needed
+            multidisc_status = multidisc_check(i)
             # Rename the files in the directory based on the global template
-            rename_file(i)
+            rename_file(i,multidisc_status)
 
     finally:
         # Summary text
