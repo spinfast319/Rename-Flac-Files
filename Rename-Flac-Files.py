@@ -173,11 +173,11 @@ def rename_file(directory, multidisc_status):
 
             # clean null characters out of track number, artist and title strings
             # set variables
-            track_number = meta_data["tracknumber"][0]
-            artist = meta_data["artist"][0]
-            title = meta_data["title"][0]
+            track_number = meta_data["TRACKNUMBER"][0]
+            artist = meta_data["ARTIST"][0]
+            title = meta_data["TITLE"][0]
             if multidisc_status == True:
-                disc_number = disc_number = meta_data["discnumber"][0]
+                disc_number = disc_number = meta_data["DISCNUMBER"][0]
             # clean variables
             track_number = clean_string_null(track_number)
             artist = clean_string_null(artist)
@@ -191,24 +191,24 @@ def rename_file(directory, multidisc_status):
                 disc_number = add_leading_zero(disc_number)
 
             # Write clean and formatted track number as new metadata to track
-            meta_data["tracknumber"] = track_number
-            meta_data["artist"] = artist
-            meta_data["title"] = title
+            meta_data["TRACKNUMBER"] = track_number
+            meta_data["ARTIST"] = artist
+            meta_data["TITLE"] = title
             if multidisc_status == True:
-                meta_data["discnumber"] = disc_number
+                meta_data["DISCNUMBER"] = disc_number
             meta_data.save()
 
             # Set new name using file template
             if multidisc_status == False:
                 if file_template == 1:
-                    new_name = f"{meta_data['tracknumber'][0]} - {meta_data['title'][0]}.flac"
+                    new_name = f"{meta_data['TRACKNUMBER'][0]} - {meta_data['TITLE'][0]}.flac"
                 elif file_template == 2:
-                    new_name = f"{meta_data['tracknumber'][0]} - {meta_data['artist'][0]} - {meta_data['title'][0]}.flac"
+                    new_name = f"{meta_data['TRACKNUMBER'][0]} - {meta_data['ARTIST'][0]} - {meta_data['TITLE'][0]}.flac"
             elif multidisc_status == True:
                 if file_template == 1:
-                    new_name = f"{meta_data['discnumber'][0]} - {meta_data['tracknumber'][0]} - {meta_data['title'][0]}.flac"
+                    new_name = f"{meta_data['DISCNUMBER'][0]} - {meta_data['TRACKNUMBER'][0]} - {meta_data['TITLE'][0]}.flac"
                 elif file_template == 2:
-                    new_name = f"{meta_data['discnumber'][0]} - {meta_data['tracknumber'][0]} - {meta_data['artist'][0]} - {meta_data['title'][0]}.flac"
+                    new_name = f"{meta_data['DISCNUMBER'][0]} - {meta_data['TRACKNUMBER'][0]} - {meta_data['ARTIST'][0]} - {meta_data['TITLE'][0]}.flac"
 
             # Clean the filename of any banned characters
             new_name = cleanFilename(new_name)
@@ -219,7 +219,7 @@ def rename_file(directory, multidisc_status):
 
             # Rename the file
             os.rename(fname, new_name)
-            count += 1  # variable will increment every loop iteration'''
+            count += 1  # variable will increment every loop iteration
 
     # figure out how many tracks were renamed
     tracks_renamed = len(rename_list) / 2
