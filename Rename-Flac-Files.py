@@ -14,8 +14,8 @@ import datetime  # Imports functionality that lets you make timestamps
 import mutagen  # Imports functionality to get metadata from music files
 
 #  Set your directories here
-album_directory = "M:\Python Test Environment\Test2"  # Which directory do you want to start with?
-log_directory = "M:\Python Test Environment\Logs"  # Which directory do you want the log in?
+album_directory = "M:\PROCESS"  # Which directory do you want to start with?
+log_directory = "M:\PROCESS-LOGS\Logs"  # Which directory do you want the log in?
 
 # Set your file name template here
 # 1 will rewrite the tracks to Track Number - Title
