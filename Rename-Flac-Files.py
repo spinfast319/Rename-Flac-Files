@@ -16,7 +16,7 @@ import datetime  # Imports functionality that lets you make timestamps
 import mutagen  # Imports functionality to get metadata from music files
 
 #  Set your directories here
-album_directory = "M:\PROCESS"  # Which directory do you want to start with?
+album_directory = "M:\RENUMBER"  # Which directory do you want to start with?
 log_directory = "M:\PROCESS-LOGS\Logs"  # Which directory do you want the log in?
 
 # Set your file name template here
@@ -194,16 +194,16 @@ def rename_file(directory, multidisc_status):
             title = clean_string_null(title)
             if multidisc_status == True:
                 disc_number = clean_string_null(disc_number)
-
-            # add leading zero to track if needed
-            track_number = add_leading_zero(track_number)
-            if multidisc_status == True:
-                disc_number = add_leading_zero(disc_number)
                 
             # reformat track numbers that are formatted 01/12 to 01 
             track_number = remove_slash(track_number)
             if multidisc_status == True:
                 disc_number = remove_slash(disc_number)    
+                
+            # add leading zero to track if needed
+            track_number = add_leading_zero(track_number)
+            if multidisc_status == True:
+                disc_number = add_leading_zero(disc_number)    
 
             # Write clean and formatted track number as new metadata to track
             meta_data["TRACKNUMBER"] = track_number
