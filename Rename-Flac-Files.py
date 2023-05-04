@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # Rename Files
 # author: hypermodified
 # This python script loops through a directory and looks for files that are flac, when it finds them it uses the Vorbis tags to rename the file to a specific format.

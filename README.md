@@ -13,6 +13,12 @@ It can handle albums with artwork folders or multiple disc folders in them. It c
 
 You may want to run the [Find Missing Tags Script](https://github.com/spinfast319/Find-Missing-Tags) prior to running this one to make sure all the albums have the needed tags before you try and rename them.
 
+This script is meant to work in conjunction with other scripts in order to manage a large music library when the source of the music has good metadata you want to use to organize it.  You can find an overview of the scripts and workflow at [Origin-Music-Management](https://github.com/spinfast319/Origin-Music-Management). 
+
+## Dependencies
+
+This project has a dependency on the python project Mutagen, which is a library for manipulating music metadata. Instructions on installing it are below.
+
 ## Install and set up
 1) Clone this script where you want to run it.
 
