@@ -14,8 +14,8 @@ import datetime  # Imports functionality that lets you make timestamps
 import mutagen  # Imports functionality to get metadata from music files
 
 #  Set your directories here
-album_directory = "M:\Python Test Environment\Albums"  # Which directory do you want to start with?
-log_directory = "M:\Python Test Environment\Logs"  # Which directory do you want the log in?
+album_directory = "M:\PROCESS"  # Which directory do you want to start with?
+log_directory = "M:\PROCESS-LOGS\Logs"  # Which directory do you want the log in?
 
 # Set your file name template here
 # 1 will rewrite the tracks to Track Number - Title
@@ -133,6 +133,14 @@ def add_leading_zero(track_number):
     else:
         return track_number
 
+# A function to remove the / symbol and anything following it from track numbers
+def remove_slash(track_number):
+    if '/' in track_number:
+        return track_number.split('/')[0]
+    else:
+        return track_number
+        
+
 
 # A function to check if there are more than one discs worth of tracks in one folder
 def multidisc_check(directory):
@@ -189,6 +197,11 @@ def rename_file(directory, multidisc_status):
             track_number = add_leading_zero(track_number)
             if multidisc_status == True:
                 disc_number = add_leading_zero(disc_number)
+                
+            # reformat track numbers that are formatted 01/12 to 01 
+            track_number = remove_slash(track_number)
+            if multidisc_status == True:
+                disc_number = remove_slash(disc_number)    
 
             # Write clean and formatted track number as new metadata to track
             meta_data["TRACKNUMBER"] = track_number
