@@ -16,7 +16,7 @@ import datetime  # Imports functionality that lets you make timestamps
 import mutagen  # Imports functionality to get metadata from music files
 
 #  Set your directories here
-album_directory = "M:\RENUMBER"  # Which directory do you want to start with?
+album_directory = "M:\PROCESS"  # Which directory do you want to start with?
 log_directory = "M:\PROCESS-LOGS\Logs"  # Which directory do you want the log in?
 
 # Set your file name template here
@@ -151,7 +151,7 @@ def multidisc_check(directory):
 
     # Loop through the directory and check if there is more than one disc number
     for fname in os.listdir(directory):
-        if fname.endswith(".flac"):
+        if fname.lower().endswith(".flac"):
             meta_data = mutagen.File(fname)
             if "discnumber" in meta_data:
                 disc_number = meta_data["discnumber"][0]
