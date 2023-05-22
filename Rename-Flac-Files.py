@@ -258,9 +258,13 @@ def main():
         print("")
         print("Now you see me...")
 
-        # Get all the subdirectories of album_directory recursively and store them in a list:
-        directories = [os.path.abspath(x[0]) for x in os.walk(album_directory)]
-        directories.remove(os.path.abspath(album_directory))  # If you don't want your main directory included
+        try:
+            # Get all the subdirectories of album_directory recursively and store them in a list:
+            directories = [os.path.abspath(x[0]) for x in os.walk(album_directory)]
+            directories.remove(os.path.abspath(album_directory))  # If you don't want your main directory included
+        except:
+            print("")
+            print("--Error: There is a problem with the directory the script is trying to run in. Check the user set album_directory variable at the top of this script and make sure the directory assigned to that variable exists.")    
 
         #  Run a loop that goes into each directory identified in the list and runs the function that renames the files
         for i in directories:
