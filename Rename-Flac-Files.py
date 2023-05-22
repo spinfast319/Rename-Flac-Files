@@ -175,7 +175,7 @@ def rename_file(directory, multidisc_status):
 
     # Loop through the directory and rename flac files
     for fname in os.listdir(directory):
-        if fname.endswith(".flac"):
+        if fname.lower().endswith(".flac"):
             meta_data = mutagen.File(fname)
             print(f"--Old Name: {fname}")
             # log old name
