@@ -16,7 +16,7 @@ import datetime  # Imports functionality that lets you make timestamps
 import mutagen  # Imports functionality to get metadata from music files
 
 #  Set your directories here
-album_directory = "M:\PROCESS"  # Which directory do you want to start with?
+album_directory = "M:\PROCESSasdf"  # Which directory do you want to start with?
 log_directory = "M:\PROCESS-LOGS\Logs"  # Which directory do you want the log in?
 
 # Set your file name template here
@@ -247,7 +247,19 @@ def rename_file(directory, multidisc_status):
     log_message = f"had {tracks_renamed:g} files renamed"
     log_list = rename_list
     log_outcomes(directory, log_name, log_message, log_list)
-
+    
+def set_directory():   
+    try:
+        # Get all the subdirectories of album_directory recursively and store them in a list:
+        directories = [os.path.abspath(x[0]) for x in os.walk(album_directory)]
+        directories.remove(os.path.abspath(album_directory))  # If you don't want your main directory included
+    except:
+        print("")
+        print("--Error: There is a problem with the directory the script is trying to run in.")
+        print("----Search the script for the phrase \"#  Set your directories here\"")
+        print("----Check the the variable called \"album_directory\" to make sure the directory assigned to that variable exists.")    
+    return directories    
+    
 
 # The main function that controls the flow of the script
 def main():
@@ -257,14 +269,9 @@ def main():
         # intro text
         print("")
         print("Now you see me...")
-
-        try:
-            # Get all the subdirectories of album_directory recursively and store them in a list:
-            directories = [os.path.abspath(x[0]) for x in os.walk(album_directory)]
-            directories.remove(os.path.abspath(album_directory))  # If you don't want your main directory included
-        except:
-            print("")
-            print("--Error: There is a problem with the directory the script is trying to run in. Check the user set album_directory variable at the top of this script and make sure the directory assigned to that variable exists.")    
+  
+        # Get all the subdirectories of album_directory recursively and store them in a list:
+        directories = set_directory()
 
         #  Run a loop that goes into each directory identified in the list and runs the function that renames the files
         for i in directories:
