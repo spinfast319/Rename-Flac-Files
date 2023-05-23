@@ -256,8 +256,8 @@ def set_directory():
     except:
         print("")
         print("--Error: There is a problem with the directory the script is trying to run in.")
-        print("----Search the script for the phrase \"#  Set your directories here\"")
-        print("----Check the the variable called \"album_directory\" to make sure the directory assigned to that variable exists.")    
+        print("----Search the script for the phrase \'#  Set your directories here\'")
+        print("----Check the the variable called \'album_directory\' to make sure the directory assigned to that variable exists.")    
     return directories    
     
 
