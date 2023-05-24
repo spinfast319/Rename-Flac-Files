@@ -18,7 +18,7 @@ import mutagen  # Imports functionality to get metadata from music files
 import origin_script_library as osl  # Imports common code used across all origin scripts
 
 #  Set your directories here
-album_directory = "M:\PROCESS"  # Which directory do you want to start with?
+album_directory = "M:\Temp"  # Which directory do you want to start with?
 log_directory = "M:\PROCESS-LOGS\Logs"  # Which directory do you want the log in?
 
 # Set your file name template here
