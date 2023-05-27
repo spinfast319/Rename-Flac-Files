@@ -18,7 +18,7 @@ import mutagen  # Imports functionality to get metadata from music files
 import origin_script_library as osl  # Imports common code used across all origin scripts
 
 #  Set your directories here
-album_directory = "M:\Temp"  # Which directory do you want to start with?
+album_directory = "M:\PROCESS"  # Which directory do you want to start with?
 log_directory = "M:\PROCESS-LOGS\Logs"  # Which directory do you want the log in?
 
 # Set your file name template here
@@ -260,7 +260,7 @@ def main():
         print("")
         print("Now you see me...")
   
-        # Get all the subdirectories of album_directory recursively and store them in a list:
+        # Get all the subdirectories of album_directory recursively and store them in a list
         directories = osl.set_directory(album_directory)
 
         #  Run a loop that goes into each directory identified in the list and runs the function that renames the files
